@@ -105,6 +105,52 @@ attempting unsupported ChatGPT authentication.
   Android lease serializes WorkManager and WebView scans; native code remains
   only for OS background execution and Android persistence.
 
+## Planned UX Direction — Opportunity Queue
+
+This is the next product-design milestone, deliberately planned before any
+visual redesign implementation. It applies to the shared web UI, with Android
+as the primary interaction constraint.
+
+### Job to be done
+
+When a fresh result appears, the user should be able to answer three questions
+in a few seconds: **What is the person saying? Why is this relevant to me? What
+should I do next?** The normal outcome is open, save, dismiss, or move to the
+next opportunity — not extended feed reading.
+
+### Feed-card behavior
+
+1. **Skim-first original text.** Show the source, author, age, and a bounded
+   excerpt of the original post (initial proposal: about 3–5 visual lines,
+   tuned against the Samsung). Preserve paragraphs but clamp long text rather
+   than rendering it in full.
+2. **Progressive disclosure.** An inline `More`/`Less` control expands only
+   that card. A separate focused detail view can show the complete original
+   post plus the scanner rationale, without expanding every result in the feed.
+3. **Keep the signal compact.** Present fit/recency and one concise “why this
+   matters” explanation near the excerpt. Avoid giving the numerical score or
+   secondary metadata more visual weight than the original text.
+4. **One clear next action.** `Open original` is the primary action. `Save` and
+   `Hide` remain accessible but secondary. Android must not surface an active
+   AI action when AI Assist is unavailable on that platform.
+5. **Fast progression.** After saving or hiding, keep the user’s scroll
+   position stable and make the next card immediately skimmable. Do not use
+   auto-advancing content or gestures that conflict with ordinary vertical
+   scrolling.
+
+### Implementation and validation sequence
+
+1. Build a static Android-size card mockup covering short, medium, and very
+   long original posts.
+2. Agree the initial text clamp and action hierarchy with the user.
+3. Implement the shared card markup/CSS without changing scan, scoring, saved,
+   hidden, or Electron behavior.
+4. Verify Feed, Saved, Watchlists, and Settings at Samsung portrait and
+   landscape sizes; specifically check source text readability, expansion,
+   button reachability, and no loss of user state.
+5. Re-run desktop regression tests and a physical Android build/install before
+   publishing the UX change.
+
 ## Milestones
 
 ### Milestone 0 — Baseline
@@ -151,6 +197,13 @@ protection, and failure behavior.
 
 Run all available JavaScript, Electron, Gradle, and device checks; inspect the
 diff and secret scan; update `TESTING.md` and project documentation.
+
+### Milestone 8 — Skim-first opportunity queue (planned)
+
+Prototype and validate the progressive-disclosure card model above before
+changing the established visual design. Acceptance: users can skim the original
+post, identify relevance, and move to the next opportunity without full-post
+cards dominating the Android feed.
 
 ## Concrete Commands
 
