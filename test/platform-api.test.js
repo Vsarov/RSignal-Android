@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { postKey as desktopPostKey, sourceRequest as desktopSourceRequest } from '../server.js';
-import { apiFetch, canOpenExternal, configureNativePlatform, consumeBackgroundResults, postKey as androidPostKey, sourceRequest as androidSourceRequest, sourceQuery as androidSourceQuery, syncBackgroundConfig } from '../public/platform-api.js';
+import { apiFetch, canOpenExternal, configureNativePlatform, consumeBackgroundResults, isNativeAndroid, postKey as androidPostKey, scanProgressively, sourceRequest as androidSourceRequest, sourceQuery as androidSourceQuery, syncBackgroundConfig } from '../public/platform-api.js';
 
 test('Android source requests preserve desktop AnyAPI request semantics', () => {
   for (const [platform, query, limit, age] of [
@@ -9,6 +9,11 @@ test('Android source requests preserve desktop AnyAPI request semantics', () => 
     ['youtube', 'Microsoft Copilot', 12, 24], ['tiktok', '#aiagents', 12, 24], ['substack', 'https://example.substack.com', 12, 24]
   ]) assert.deepEqual(androidSourceRequest(platform, query, limit, age), desktopSourceRequest(platform, query, limit, age));
   assert.equal(androidSourceQuery('linkedin', 'from:fixture "AI agents" -is:retweet'), '"AI agents"');
+});
+
+test('Android detection handles a Capacitor localhost WebView before bridge promotion', () => {
+  globalThis.window = { location: { hostname: 'localhost', port: '' }, Capacitor: { getPlatform: () => 'web' } };
+  assert.equal(isNativeAndroid(), true);
 });
 
 test('Android seen keys remain compatible with desktop canonical identity', () => {
@@ -40,6 +45,25 @@ test('Android demo scans persist seen identities and avoid duplicate alerts', as
   assert.ok(preferences.get('rsignals:seen-posts:v1'));
 });
 
+test('Android progressive scans yield each watchlist job before the batch completes', async () => {
+  const preferences = new Map();
+  const plugins = {
+    SecureStorage: { internalGetItem: async () => ({ data: null }) },
+    Preferences: { get: async ({ key }) => ({ value: preferences.get(key) || null }), set: async ({ key, value }) => preferences.set(key, value) }
+  };
+  globalThis.window = { Capacitor: { isNativePlatform: () => true, getPlatform: () => 'android', registerPlugin: name => plugins[name] } };
+  const batches = [];
+  const result = await scanProgressively({ queriesByPlatform: { x: ['first topic', 'second topic'] }, platforms: ['x'], limit: 12, maxAgeHours: 3 }, batch => {
+    batches.push({ completed: batch.completed, total: batch.total, posts: batch.posts.length, query: batch.job.query });
+  });
+  assert.equal(result.ok, true);
+  assert.deepEqual(batches, [
+    { completed: 1, total: 2, posts: 3, query: 'first topic' },
+    { completed: 2, total: 2, posts: 3, query: 'second topic' }
+  ]);
+  assert.equal(result.posts.length, 6);
+});
+
 test('Android foreground scans defer when the native background lease is held', async () => {
   const plugins = {
     ScanCoordinator: { acquire: async () => ({ acquired: false, expiresAt: Date.now() + 60_000 }), release: async () => { throw new Error('release should not run'); } }
@@ -48,6 +72,21 @@ test('Android foreground scans defer when the native background lease is held', 
   const result = await apiFetch('/api/search', { method: 'POST', body: JSON.stringify({ platforms: ['x'], queriesByPlatform: { x: ['enterprise AI'] } }) });
   assert.equal(result.status, 409);
   assert.deepEqual(await result.json(), { error: 'A scheduled scan is already running. Try again shortly.', scanInProgress: true });
+});
+
+test('Android scans continue when the optional coordinator is not implemented', async () => {
+  const preferences = new Map();
+  const plugins = {
+    ScanCoordinator: { acquire: async () => { throw new Error('"ScanCoordinator" plugin is not implemented on android'); }, release: async () => {} },
+    SecureStorage: { internalGetItem: async () => ({ data: null }) },
+    Preferences: { get: async ({ key }) => ({ value: preferences.get(key) || null }), set: async ({ key, value }) => preferences.set(key, value) }
+  };
+  globalThis.window = { Capacitor: { isNativePlatform: () => true, getPlatform: () => 'android', registerPlugin: name => plugins[name] } };
+  const result = await apiFetch('/api/search', { method: 'POST', body: JSON.stringify({ platforms: ['x'], queriesByPlatform: { x: ['enterprise AI'] } }) });
+  const payload = await result.json();
+  assert.equal(result.status, 200);
+  assert.equal(payload.demo, true);
+  assert.equal(payload.posts.length, 3);
 });
 
 test('Android live scans use native HTTP and normalize a fresh source result', async () => {
@@ -88,6 +127,47 @@ test('Android key saving uses SecureStorage native methods and its prefixed key'
   assert.equal(saved.ok, true);
   assert.equal(secure.get('capacitor-storage_rsignals:anyapi-key'), 'fixture-key');
   assert.equal((await (await apiFetch('/api/status')).json()).configured, true);
+});
+
+test('Android AI Assist uses a Keystore-backed OpenAI API key', async () => {
+  const secure = new Map();
+  const preferencesStore = new Map();
+  const requests = [];
+  const plugins = {
+    SecureStorage: {
+      internalGetItem: async ({ prefixedKey }) => ({ data: secure.get(prefixedKey) || null }),
+      internalSetItem: async ({ prefixedKey, data }) => secure.set(prefixedKey, data),
+      internalRemoveItem: async ({ prefixedKey }) => ({ success: secure.delete(prefixedKey) })
+    },
+    Preferences: {
+      get: async ({ key }) => ({ value: preferencesStore.get(key) || null }),
+      set: async ({ key, value }) => preferencesStore.set(key, value)
+    },
+    CapacitorHttp: { request: async options => {
+      requests.push(options);
+      return { status: 200, data: { choices: [{ message: { content: JSON.stringify({ relevance: 'high', relevanceScore: 88, summary: 'Useful discussion.', whyNow: 'It is fresh and unanswered.', suggestedReplies: [{ style: 'helpful', text: 'Here is a practical suggestion.' }, { style: 'curious', text: 'What constraint matters most here?' }, { style: 'concise', text: 'A useful angle is to test this early.' }] }) } }] } };
+    } }
+  };
+  globalThis.window = { Capacitor: { isNativePlatform: () => true, getPlatform: () => 'android', registerPlugin: name => plugins[name] } };
+  const initial = await (await apiFetch('/api/ai/status')).json();
+  assert.equal(initial.available, true);
+  assert.equal(initial.connected, false);
+  const connected = await (await apiFetch('/api/ai/login/key', { method: 'POST', body: JSON.stringify({ apiKey: 'sk-android-fixture' }) })).json();
+  assert.equal(connected.connected, true);
+  assert.equal(secure.get('capacitor-storage_rsignals:openai-api-key'), 'sk-android-fixture');
+  const savedModels = await (await apiFetch('/api/ai/preferences', { method: 'POST', body: JSON.stringify({ models: { summary: 'gpt-5-nano', reply: 'gpt-5.4-mini' } }) })).json();
+  assert.deepEqual(savedModels.models, { summary: 'gpt-5-nano', reply: 'gpt-5.4-mini' });
+  const result = await (await apiFetch('/api/ai/analyze', { method: 'POST', body: JSON.stringify({ post: { platform: 'x', text: 'A fresh post' }, profile: 'Product builder', instructions: 'Be practical' }) })).json();
+  assert.equal(result.relevanceScore, 88);
+  assert.equal(result.suggestedReplies.length, 3);
+  assert.equal(requests.length, 2);
+  assert.deepEqual(requests.map(request => request.data.model), ['gpt-5-nano', 'gpt-5.4-mini']);
+  assert.equal(requests[0].headers.Authorization, 'Bearer sk-android-fixture');
+  assert.equal(requests[0].data.reasoning_effort, 'minimal');
+  assert.equal(requests[1].data.reasoning_effort, 'none');
+  const loggedOut = await (await apiFetch('/api/ai/logout', { method: 'POST' })).json();
+  assert.equal(loggedOut.connected, false);
+  assert.equal(secure.has('capacitor-storage_rsignals:openai-api-key'), false);
 });
 
 test('Android follower enrichment uses validated profile lookups and durable cache', async () => {

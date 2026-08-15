@@ -124,5 +124,63 @@ dialog{border-radius:8px;box-shadow:0 20px 60px rgba(16,24,40,.2)}
 .native-android .ai-connection-actions button,.native-android .test-notification{width:100%}
 .native-android .settings-actions{display:block}
 .native-android .settings-actions .primary{width:100%}
-.native-android .ai-settings.ai-unavailable>label,.native-android .ai-settings.ai-unavailable>textarea,.native-android .ai-settings.ai-unavailable>.hint{display:none}
-@media(max-width:480px){.native-android .brand strong{display:none}.native-android .sidebar{gap:6px}.native-android .nav{min-width:40px;padding:10px}.native-android header{align-items:flex-start;flex-direction:column}.native-android header .primary{width:100%}.native-android .key-row button{flex-basis:100%}}
+.ai-models{display:none}
+.native-android .ai-models{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 4px}
+.native-android .ai-models label{display:grid;gap:6px;margin:0;color:var(--ink);font-size:13px;font-weight:700}
+.native-android .ai-models select{width:100%;min-width:0;margin:0}
+.native-android .ai-models small{color:var(--muted);font-size:11px;font-weight:400;line-height:1.35}
+.native-android .ai-settings.ai-unavailable>label,.native-android .ai-settings.ai-unavailable>textarea,.native-android .ai-settings.ai-unavailable>.hint,.native-android .ai-settings.ai-unavailable>.ai-models{display:none}
+@media(max-width:480px){.native-android .brand strong{display:none}.native-android .sidebar{gap:6px}.native-android .nav{min-width:40px;padding:10px}.native-android header{align-items:flex-start;flex-direction:column}.native-android header .primary{width:100%}.native-android .key-row button{flex-basis:100%}.native-android .ai-models{grid-template-columns:minmax(0,1fr)}}
+
+/* Android opportunity queue: compact skim cards with a clear action hierarchy. */
+.native-android .feed{gap:12px}
+.native-android .card{position:relative;display:block;min-width:0;padding:16px;border:2px solid #d8dde2;border-radius:12px;background:#fff;box-shadow:0 3px 8px rgba(16,24,40,.08)}
+.native-android .card:focus-within{border-color:#fa4e4e;box-shadow:0 0 0 3px rgba(250,78,78,.13)}
+.native-android .score{position:absolute;top:14px;right:14px;min-width:76px;padding:7px 9px;border:0;border-radius:10px;background:#111;color:#fff;display:flex;align-items:flex-start;justify-content:flex-start;gap:2px;box-shadow:0 4px 10px rgba(16,24,40,.18)}
+.native-android .score strong{font-size:24px;line-height:1;font-weight:900;color:#fff}
+.native-android .score span{display:block;margin-top:2px;color:#ffb7d2;font-size:8px;line-height:1.05;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.native-android .author{padding-right:94px;gap:6px;font-size:12px}
+.native-android .author strong{font-size:13px}
+.native-android .cached-badge{display:inline-flex;align-items:center;min-height:20px;padding:2px 6px;border:1px solid #f1d7a4;border-radius:99px;background:#fff8e8;color:#8a5b12;font-size:10px;font-weight:800;letter-spacing:.02em}
+.native-android .recency-badge{display:inline-flex;align-items:center;min-height:20px;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.02em}
+.native-android .recency-now{border:1px solid #b9e3c5;background:#edfff2;color:#14733a}
+.native-android .recency-soon{border:1px solid #f2c7d5;background:#fff5fa;color:#b12f70}
+.native-android .recency-old{border:1px solid #d8dde2;background:#eff1f3;color:#605e5c}
+.native-android .post-text{margin:10px 0 0;font-family:inherit;font-size:16px;line-height:1.45}
+.native-android .post-text.clamped:not(.expanded){-webkit-line-clamp:5}
+.native-android .post-more{margin:8px 0 0;min-height:40px;padding:8px 11px;border:1px solid #d8dde2;border-radius:20px;background:#eff1f3;color:#323130;font-size:12px;font-weight:700}
+.native-android .post-more:hover{text-decoration:none;background:#e6e9ec}
+.native-android .metrics{display:flex;flex-wrap:wrap;gap:7px 12px;margin-top:12px;font-size:11px}
+.native-android .metrics span{color:#605e5c}
+.native-android .actions{display:flex;align-items:center;gap:6px;margin-top:10px}
+.native-android .actions .icon-btn{min-width:48px;min-height:48px;padding:8px 10px;border-radius:24px;font-size:12px;font-weight:700}
+.native-android .actions .save{width:48px;padding:0;border-color:#f2c7d5;border-radius:50%;background:#fff0f5;color:#c83d70;font-size:20px}
+.native-android .actions .ai-assist{width:48px;padding:0;border-color:#f2c7d5;background:#fff5fa;color:#b12f70;font-size:0}
+.native-android .actions .ai-assist::before{content:"✦";font-size:18px}
+.native-android .actions .inspect{display:inline-flex;min-width:106px;align-items:center;justify-content:space-between;gap:7px;border:0;padding:6px 6px 6px 13px;background:var(--brand-grad);color:#fff;box-shadow:0 5px 13px rgba(246,53,152,.2);font-size:0}
+.native-android .actions .inspect::before{content:"Open post";font-size:12px}
+.native-android .actions .inspect::after{display:grid;width:30px;height:30px;place-items:center;border-radius:50%;background:#fff;color:#d83b6b;content:"\2197";font-size:16px;font-weight:400}
+.native-android .actions .hide{width:48px;padding:0;border-color:#d8dde2;background:#eff1f3;color:#605e5c;font-size:0}
+.native-android .actions .hide::before{content:"×";font-size:20px;font-weight:400}
+@media(max-width:480px){.native-android .actions{gap:5px}}
+
+/* Keep the skim text dominant while reclaiming space from chrome around it. */
+.native-android .card{padding:12px 14px}
+.native-android .score{top:11px;right:11px;min-width:68px;padding:5px 7px;border-radius:8px}
+.native-android .score strong{font-size:20px}
+.native-android .score span{font-size:7px}
+.native-android .author{padding-right:84px;gap:4px;line-height:1.2}
+.native-android .post-text{margin-top:8px;padding-right:84px;font-size:16px;line-height:1.38}
+.native-android .post-more{margin-top:4px;min-height:34px;padding:5px 10px}
+.native-android .metrics{display:contents}
+.native-android .metrics span{display:inline;line-height:1.25;margin-right:10px}
+.native-android .query-chip{margin:0 4px 0 0;padding:3px 6px;font-size:10px;line-height:1.2;vertical-align:middle}
+.native-android .actions{margin-top:8px;justify-content:flex-end}
+.native-android .ai-panel{min-width:0;overflow-wrap:anywhere}
+.native-android .ai-panel-head{flex-wrap:wrap}
+.native-android .ai-panel-head small{white-space:normal}
+.native-android .ai-replies{grid-template-columns:minmax(0,1fr)}
+.native-android .ai-reply p{overflow-wrap:anywhere}
+.feed-loading{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:14px 16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;color:#605e5c;font-size:13px}
+.feed-loading i{width:14px;height:14px;border:2px solid #f2c7d5;border-top-color:#f63598;border-radius:50%;animation:rsignals-spin .8s linear infinite}
+@keyframes rsignals-spin{to{transform:rotate(360deg)}}

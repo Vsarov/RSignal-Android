@@ -38,3 +38,9 @@ test('caps momentum and handles missing engagement values safely', () => {
   assert.ok(Number.isFinite(score({ createdAt: post(5).createdAt }, now)));
   assert.ok(score(post(5, { likes: 1_000_000, reposts: 1_000_000 }), now) <= 99);
 });
+
+test('adds topic alignment to the opportunity fit score', () => {
+  const aligned = score(post(10, { query: 'developer tools OR SaaS', text: 'A developer tools team is hiring.' }), now);
+  const weaklyAligned = score(post(10, { query: 'developer tools OR SaaS', text: 'A general business announcement.' }), now);
+  assert.ok(aligned > weaklyAligned);
+});

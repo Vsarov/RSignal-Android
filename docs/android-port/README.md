@@ -68,9 +68,12 @@ android/app/build/outputs/apk/debug/app-debug.apk
   source/OpenAI hosts outside the app; Capacitor Local Notifications requests
   permission before delivery. Only fresh, score-qualified results enter the
   notification decision path.
-- **AI Assist:** unavailable on Android in this iteration. The existing feature
-  depends on the desktop Codex executable and credential store; it remains
-  unchanged for Electron.
+- **AI Assist:** Android supports on-demand analysis, reply drafts, and feed
+  screening through a user-supplied OpenAI API key stored with Android
+  Keystore-backed secure storage. ChatGPT-subscription sign-in and the desktop
+  Codex executable remain Electron-only. Settings provides separate model
+  choices for summaries/screening and suggested replies; selections persist in
+  Android Preferences and default to GPT-4o mini.
 - **Foreground scheduling:** the configurable foreground interval runs while
   the Android app/WebView is active. A native scan lease prevents it from
   overlapping a WorkManager scan.

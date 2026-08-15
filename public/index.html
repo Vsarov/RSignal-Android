@@ -36,6 +36,7 @@
           <div class="tabs"><button class="tab active" data-filter="all">Best matches</button><button class="tab" data-filter="fresh">Newest</button><button class="tab" data-filter="momentum">Momentum</button></div>
           <div class="scan-status"><span id="scanMeta">Not scanned yet</span><span id="autoScanMeta" class="auto-scan-meta">Automatic scan starting…</span></div>
         </div>
+        <div id="feedLoading" class="feed-loading" aria-live="polite"><span>Loading latest opportunities</span><i aria-hidden="true"></i></div>
         <div id="feed" class="feed"></div>
         <div id="empty" class="empty hidden"><h2>No opportunities yet</h2><p>Add watchlist topics, then run a scan.</p></div>
       </section>
@@ -112,6 +113,10 @@
                 <div class="key-row"><input id="openAiApiKey" type="password" autocomplete="off" placeholder="Paste your OpenAI API key" /><button id="saveOpenAiKey" class="secondary" type="button">Use API key</button><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">Create a key</a></div>
                 <div class="hint">API usage is billed by OpenAI. The key is passed directly to the official Codex credential store and is never logged.</div>
               </details>
+              <div class="ai-models" aria-label="Android AI model choices">
+                <label for="aiSummaryModel">Summaries and screening<select id="aiSummaryModel"><option value="gpt-4o-mini">GPT-4o mini</option><option value="gpt-5-nano">GPT-5 nano</option><option value="gpt-5-mini">GPT-5 mini</option><option value="gpt-5.4-nano">GPT-5.4 nano</option><option value="gpt-5.4-mini">GPT-5.4 mini</option></select><small>Used for fit scoring, why-now summaries, and feed screening.</small></label>
+                <label for="aiReplyModel">Suggested replies<select id="aiReplyModel"><option value="gpt-4o-mini">GPT-4o mini</option><option value="gpt-5-nano">GPT-5 nano</option><option value="gpt-5-mini">GPT-5 mini</option><option value="gpt-5.4-nano">GPT-5.4 nano</option><option value="gpt-5.4-mini">GPT-5.4 mini</option></select><small>Use GPT-5.4 mini when reply quality matters most.</small></label>
+              </div>
               <label for="aiInstructions">AI engagement instructions</label>
               <textarea id="aiInstructions" rows="5" placeholder="Examples: Do not show posts about hiring. Focus on people asking for practical advice. Keep suggested replies helpful and never salesy."></textarea>
               <div class="hint">When this field is not empty, each new scan batch is sent to OpenAI for semantic screening before posts appear or notifications are sent. If screening is unavailable, RSignals shows the posts and reports that AI screening was skipped.</div>
@@ -133,6 +138,30 @@
   </div>
 
   <script src="capacitor.js"></script>
+  <script>
+    // Keep the Android shell usable even if an optional module/plugin fails
+    // during startup. This also makes WebView startup errors visible without
+    // requiring remote Chrome debugging.
+    (() => {
+      const markStartupError = (message) => {
+        const meta = document.querySelector('#scanMeta');
+        const loading = document.querySelector('#feedLoading');
+        if (meta) meta.textContent = `Startup error: ${String(message || 'Unknown error').slice(0, 180)}`;
+        loading?.classList.add('hidden');
+      };
+      window.addEventListener('error', event => {
+        if (event?.message) markStartupError(event.message);
+      });
+      window.addEventListener('unhandledrejection', event => {
+        if (event?.reason) markStartupError(event.reason?.message || event.reason);
+      });
+      try {
+        if (window.Capacitor && !window.signalDesktop) document.documentElement.classList.add('native-android');
+      } catch (error) {
+        markStartupError(error?.message || error);
+      }
+    })();
+  </script>
   <script src="app.js" type="module"></script>
 </body>
 </html>

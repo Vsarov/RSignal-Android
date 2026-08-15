@@ -105,8 +105,9 @@ The installer is per-user and does not require an installation-folder choice. Th
 RSignals also has a Capacitor Android project that reuses the existing web UI.
 Open [the Android guide](docs/android-port/README.md) for Android Studio setup,
 the required Java 21 Gradle runtime, build/test commands, APK location, secure
-AnyAPI-key storage, and Samsung/ADB validation steps. Android AI Assist is
-explicitly unavailable; it does not package the desktop Codex executable.
+AnyAPI-key storage, and Samsung/ADB validation steps. Android AI Assist uses
+an optional user-supplied OpenAI API key; it does not package the desktop
+Codex executable or support ChatGPT-subscription sign-in.
 
 ## Run from source
 
@@ -139,11 +140,15 @@ Follower counts load after scan results appear. RSignals deduplicates authors an
 
 ## Optional AI Assist
 
-Open Settings, find AI Assist, and choose **Connect ChatGPT** to sign in with a ChatGPT subscription that includes Codex access. As a fallback, expand **Use an OpenAI API key instead**; API usage is then billed separately by OpenAI.
+On Windows, open Settings and choose **Connect ChatGPT** to sign in with a ChatGPT subscription that includes Codex access. On Android, expand **Use an OpenAI API key on Android** and enter a user-supplied API key; usage is billed separately by OpenAI and the key is protected by Android Keystore-backed storage.
 
 AI engagement instructions can describe what to show or avoid semantically, regardless of exact wording, and how suggested replies should sound. For example, an instruction to avoid hiring content can recognize recruiting and staffing announcements that do not contain the word “hiring.” When instructions are saved, RSignals sends each new scan batch to OpenAI before displaying posts or sending notifications. Screening is batched and cached; if it is unavailable, RSignals fails open by showing the posts and reporting that screening was skipped.
 
 Selecting **AI Assist** on a result sends that public post, its watchlist topic and public metrics, your profile, and the engagement instructions to OpenAI. It returns a relevance assessment and helpful, curious, and concise reply drafts inline. You can copy a draft, but RSignals never submits it or performs any social action.
+
+On Android, Settings also lets you choose separate OpenAI models for summaries/screening and suggested replies. The choices are stored in Android Preferences; the default remains GPT-4o mini to avoid surprising usage costs. GPT-5 nano is the value-oriented screening choice, while GPT-5.4 mini is the quality-oriented reply choice.
+
+The Android adapter uses the Chat Completions endpoint with strict structured JSON output. It sends `temperature` only for GPT-4o mini; GPT-5 models receive their documented family-specific reasoning setting (GPT-5: `minimal`; GPT-5.4 variants: `none`) so changing models does not produce an invalid-parameter error.
 
 OpenAI credentials are managed by the official bundled Codex runtime in the Windows credential store. RSignals does not log or persist credentials in its own files. AI results are cached locally for up to 30 days to avoid repeat usage for the same post and profile.
 

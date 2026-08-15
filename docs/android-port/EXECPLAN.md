@@ -39,8 +39,8 @@ The pure scanner core must not import Node, Electron, Android, a filesystem, or
 an HTTP server. Electron will retain its server as a compatibility adapter.
 Android will use Capacitor-native network, preferences, secure credential
 storage, browser, notification, and lifecycle adapters. The native Codex service
-will remain Electron-only; Android will show AI Assist as unavailable rather than
-attempting unsupported ChatGPT authentication.
+will remain Electron-only; Android will use an isolated user-supplied OpenAI
+API-key adapter rather than attempting unsupported ChatGPT authentication.
 
 ## Progress
 
@@ -55,6 +55,8 @@ attempting unsupported ChatGPT authentication.
 - [~] Extracted shared request/query/identity policy and characterization tests; source-specific parser unification remains future work because the native WorkManager adapter must stay small and OS-safe.
 - [x] Build, install, launch, and validate the core Android scanner on the available Samsung device.
 - [x] Extend regression coverage to 34 web/API tests plus 5 Android JVM tests, including Android persistence, live transport, shared request/identity policy, scan coordination, follower caching, notification routing, and background worker behavior.
+- [x] 2026-08-15: Added Android progressive foreground scanning. Watchlist jobs are issued one at a time through the existing native search route so seen-key commits remain serialized; each completed job renders immediately while later sources continue.
+- [x] 2026-08-15: Added Android AI Assist through a Keystore-backed user-supplied OpenAI API key. On-demand analysis, reply drafts, and instruction-based screening use the official API; desktop Codex and ChatGPT login remain Electron-only.
 - [ ] Complete time- or disruption-dependent physical scenarios: locked-screen execution, result-notification tap, network transitions, reboot, and extended Samsung battery-optimization observation.
 
 ## Surprises & Discoveries
@@ -89,10 +91,14 @@ attempting unsupported ChatGPT authentication.
 - **2026-08-14 — retain Electron's localhost server initially.** It is a stable
   desktop compatibility layer. New shared code is extracted beneath it instead
   of replacing desktop routing in the Android milestone.
-- **2026-08-14 — Android AI Assist is explicitly unavailable in the first port.**
-  The existing implementation requires a native Codex binary, subprocesses, and
-  desktop credential handling. No supported ChatGPT subscription flow exists in
-  this application for Android.
+- **2026-08-14 — keep desktop Codex isolated; add Android API-key Assist.**
+  The existing desktop implementation still requires a native Codex binary,
+  subprocesses, and desktop credential handling. Android now uses an isolated
+  user-supplied OpenAI API key instead; ChatGPT subscription sign-in remains
+  Electron-only. Android Settings persists separate models for summary/
+  screening and reply generation. The Android Chat Completions adapter uses
+  structured JSON output, `max_completion_tokens`, `temperature` only for
+  non-reasoning models, and model-specific GPT-5 reasoning values.
 - **2026-08-14 — use Capacitor-native transport and credential storage.**
   Android must not rely on WebView CORS or persist AnyAPI credentials in
   `localStorage`.
@@ -157,7 +163,7 @@ next opportunity — not extended feed reading.
    the excerpt and never compete with the original text.
 5. **One clear next action.** `Open original` is the primary action. `Save` and
    `Hide` remain accessible but secondary. Android must not surface an active
-   AI action when AI Assist is unavailable on that platform.
+   AI action when no Android OpenAI API key has been configured.
 6. **Fast progression.** After saving or hiding, keep the user’s scroll
    position stable and make the next card immediately skimmable. Do not use
    auto-advancing content or gestures that conflict with ordinary vertical
@@ -203,8 +209,9 @@ activity launches and renders the existing UI.
 ### Milestone 4 — Android scanning and persistence
 
 Implement secure AnyAPI credential storage, native HTTP, durable preferences,
-manual scan orchestration, local seen history, and a user-facing unavailable AI
-state. Acceptance: configured live/manual scan works without localhost.
+manual scan orchestration, local seen history, and Android API-key AI Assist.
+Acceptance: configured live/manual scan works without localhost and AI Assist
+can analyze a post when the user supplies a valid OpenAI API key.
 
 ### Milestone 5 — Native mobile behavior
 
