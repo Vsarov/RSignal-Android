@@ -116,6 +116,11 @@ and header surfaces, neutral light cards, Segoe UI typography, and the warm
 orange-to-pink accent. The UX change should alter information density and
 disclosure behavior, not introduce a new visual theme.
 
+**Android touch constraint.** Interactive controls should use approximately
+48dp hit areas with visible spacing, readable 12–14sp content text, and a
+bottom navigation treatment for the four primary destinations. The queue can
+remain information-dense, but metrics and actions must not become tiny targets.
+
 ### Job to be done
 
 When a fresh result appears, the user should be able to answer three questions
