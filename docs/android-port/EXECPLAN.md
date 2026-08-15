@@ -120,16 +120,18 @@ next opportunity — not extended feed reading.
 
 ### Feed-card behavior
 
-1. **Skim-first original text.** Show the source, author, age, and a bounded
-   excerpt of the original post (initial proposal: about 3–5 visual lines,
-   tuned against the Samsung). Preserve paragraphs but clamp long text rather
-   than rendering it in full.
-2. **Progressive disclosure.** An inline `More`/`Less` control expands only
-   that card. A separate focused detail view can show the complete original
-   post plus the scanner rationale, without expanding every result in the feed.
+1. **Queue-first original-text skim.** The default phone view must retain
+   several opportunities at once, rather than making the user read cards one by
+   one. Each compact card shows source, author, age, a 2–3-line original-post
+   excerpt, and a quiet fit cue; preserve paragraph breaks but clamp long text.
+2. **Three reading depths.** Browse the multi-card queue first; `More` expands
+   only the chosen card inline while nearby cards remain visible; an in-app
+   detail view is the deliberate third level for the complete original post,
+   scanner rationale, and actions. Returning from either level preserves the
+   queue and scroll position.
 3. **Keep the signal compact.** Present fit/recency and one concise “why this
-   matters” explanation near the excerpt. Avoid giving the numerical score or
-   secondary metadata more visual weight than the original text.
+   matters” explanation near the excerpt. The score stays a small trust cue
+   (for example, `84 fit`), never a dominant score column or card.
 4. **One clear next action.** `Open original` is the primary action. `Save` and
    `Hide` remain accessible but secondary. Android must not surface an active
    AI action when AI Assist is unavailable on that platform.
@@ -200,10 +202,11 @@ diff and secret scan; update `TESTING.md` and project documentation.
 
 ### Milestone 8 — Skim-first opportunity queue (planned)
 
-Prototype and validate the progressive-disclosure card model above before
-changing the established visual design. Acceptance: users can skim the original
-post, identify relevance, and move to the next opportunity without full-post
-cards dominating the Android feed.
+Prototype and validate the three-depth queue model above before changing the
+established visual design. Acceptance: multiple compact cards are visible by
+default; a chosen card can expand without losing its neighboring opportunities;
+and full text is available only through a deliberate detail view, without
+losing queue position.
 
 ## Concrete Commands
 
