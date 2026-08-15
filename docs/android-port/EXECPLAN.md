@@ -111,6 +111,11 @@ This is the next product-design milestone, deliberately planned before any
 visual redesign implementation. It applies to the shared web UI, with Android
 as the primary interaction constraint.
 
+**Theme constraint.** Preserve the existing RSignals identity: black navigation
+and header surfaces, neutral light cards, Segoe UI typography, and the warm
+orange-to-pink accent. The UX change should alter information density and
+disclosure behavior, not introduce a new visual theme.
+
 ### Job to be done
 
 When a fresh result appears, the user should be able to answer three questions
