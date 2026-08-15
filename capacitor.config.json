@@ -1,0 +1,11 @@
+{
+  "appId": "com.signal.scanner",
+  "appName": "RSignals",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

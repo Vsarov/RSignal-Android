@@ -100,6 +100,14 @@ When building from source, run `Build and Install Signal.bat`. The legacy filena
 
 The installer is per-user and does not require an installation-folder choice. The internal application ID remains stable so existing settings continue across the product-name rename.
 
+## Android development
+
+RSignals also has a Capacitor Android project that reuses the existing web UI.
+Open [the Android guide](docs/android-port/README.md) for Android Studio setup,
+the required Java 21 Gradle runtime, build/test commands, APK location, secure
+AnyAPI-key storage, and Samsung/ADB validation steps. Android AI Assist is
+explicitly unavailable; it does not package the desktop Codex executable.
+
 ## Run from source
 
 ### Requirements

@@ -3,6 +3,7 @@ import { readFile, writeFile, appendFile, rename, mkdir } from 'node:fs/promises
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CodexService, safeError as safeCodexError } from './codex-service.js';
+import { postKey as sharedPostKey, sourceQuery, sourceRequest } from './public/shared/scanner-policy.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const publicDir = join(root, 'public');
@@ -103,24 +104,6 @@ function deepFindXHandle(value,seen=new Set()){
   }
   if(typeof value!=='object'||seen.has(value)) return undefined; seen.add(value);
   for(const child of Object.values(value)){ const found=deepFindXHandle(child,seen); if(found) return found; }
-}
-
-function sourceQuery(platform, topic) {
-  const clean = String(topic || '')
-    .replace(/(^|\s)-is:(?:repost|retweet)\b/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (platform !== 'x') {
-    return clean
-      .replace(/(^|\s)(?:from|to|lang|since|until|filter):\S+/gi, ' ')
-      .replace(/(^|\s)-is:repost\b/gi, ' ')
-      .replace(/(^|\s)-is:retweet\b/gi, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-  // Keep the first X pass deliberately small: phrases, terms, and OR are supported
-  // by the observed provider response. Do not assume the full native X grammar.
-  return clean.replace(/[()]/g, ' ').replace(/\bAND\b/gi, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function isRepostRecord(raw, platform) {
@@ -311,15 +294,6 @@ function sourceSku(platform){
     substack:process.env.ANYAPI_SUBSTACK_SEARCH_SKU||'substack.posts'
   }[platform];
 }
-function sourceRequest(platform,query,limit,maxAgeHours=168){
-  if(platform==='x') return {query,limit,queryType:'Latest',requireSinglePage:false};
-  if(platform==='linkedin') return {query,datePosted:maxAgeHours<=24?'last-day':'last-week',sort:'date',limit:Math.min(limit,10)};
-  if(platform==='reddit') return {query,sort:'new',timeframe:'week'};
-  if(platform==='youtube') return {query,uploadDate:'this_week'};
-  if(platform==='tiktok') return {hashtag:String(query).replace(/^#/,'').trim(),limit:Math.min(limit,20)};
-  if(platform==='substack') return {url:query,limit:Math.min(limit,100),includeContent:false};
-  return {query};
-}
 function extractSourceItems(platform,payload){
   if(platform==='linkedin') return extractLinkedInPosts(payload);
   return pickArray(payload?.output);
@@ -328,29 +302,8 @@ function sourceNormalizer(platform){
   return {x:normalizeXPost,linkedin:normalizeLinkedInPost,reddit:normalizeRedditPost,youtube:normalizeYouTubeVideo,tiktok:normalizeTikTokVideo,substack:normalizeSubstackPost}[platform];
 }
 
-function normalizedUrl(value) {
-  try {
-    const parsed = new URL(String(value));
-    parsed.protocol = 'https:';
-    parsed.hostname = parsed.hostname.toLowerCase().replace(/^www\./, '');
-    parsed.search = '';
-    parsed.hash = '';
-    parsed.pathname = parsed.pathname.replace(/\/+$/, '');
-    return parsed.toString();
-  } catch { return ''; }
-}
-
 function postKey(post){
-  const platform=String(post.platform||'x').toLowerCase();
-  const url=String(post.url||'');
-  const x=url.match(/(?:x\.com|twitter\.com)\/[^/]+\/status\/(\d+)/i)?.[1];
-  const li=url.match(/activity[:-](\d+)/i)?.[1];
-  const id=String(post.id||'');
-  const stableId=x||li||(id&&!/^content-/.test(id)?id:'');
-  if(stableId) return `${platform}:${stableId}`;
-  const canonical=normalizedUrl(url);
-  if(canonical) return `${platform}:url:${canonical}`;
-  return `${platform}:content:${stableHash(`${post.author?.username||post.author?.name||''}|${post.createdAt||''}|${post.text||''}`)}`;
+  return sharedPostKey(post);
 }
 async function readSeenPosts(){ try{ const p=JSON.parse(await readFile(join(getDataDir(),'seen-posts.json'),'utf8')); return p&&typeof p==='object'?p:{}; }catch{return{};} }
 async function writeSeenPosts(seen){ const cutoff=Date.now()-90*24*60*60*1000; const trimmed=Object.fromEntries(Object.entries(seen).filter(([,when])=>Number.isFinite(Number(when))&&Number(when)>=cutoff)); const target=join(getDataDir(),'seen-posts.json'); const temporary=`${target}.tmp`; await writeFile(temporary,JSON.stringify(trimmed,null,2),'utf8'); await rename(temporary,target); }

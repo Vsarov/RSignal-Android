@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">RSignals</string>
+    <string name="title_activity_main">RSignals</string>
+    <string name="package_name">com.signal.scanner</string>
+    <string name="custom_url_scheme">com.signal.scanner</string>
+</resources>

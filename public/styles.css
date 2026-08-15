@@ -74,3 +74,55 @@ header p{color:rgba(255,255,255,.82);font-size:14px;font-weight:300;line-height:
 .optional-label{display:inline-flex;margin-left:6px;padding:2px 6px;border-radius:99px;background:#f3f4f6;color:var(--muted);font-size:10px;font-weight:700;vertical-align:2px}.ai-connection-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px;border:1px solid var(--line);border-radius:6px;background:#f8f9fa}.ai-connection-row>div:first-child{display:grid;gap:4px}.ai-connection-row small{color:var(--muted);font-size:12px}.ai-connection-actions{display:flex;gap:8px;flex:none}.api-fallback{margin:14px 0;color:var(--muted);font-size:13px}.api-fallback summary{cursor:pointer;font-weight:700;color:var(--ink)}.api-fallback .key-row{margin-top:12px}.api-fallback .key-row input{min-width:240px;margin:0}.api-fallback a{color:var(--accent);font-weight:700}.ai-settings>label{display:block;margin:16px 0 8px;font-size:13px;font-weight:700}.ai-assist{color:#b12f70;font-weight:700}.ai-panel{margin-top:18px;padding:16px;border:1px solid #f2d9e5;border-radius:8px;background:#fff8fb}.ai-panel-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.ai-panel-head>div{display:grid;gap:8px}.ai-panel-head small{color:var(--muted);white-space:nowrap}.ai-badge{width:max-content;padding:3px 7px;border-radius:99px;font-size:11px;font-weight:800;text-transform:capitalize}.ai-badge.high{background:#dcfce7;color:#166534}.ai-badge.medium{background:#fef3c7;color:#92400e}.ai-badge.low{background:#f3f4f6;color:#4b5563}.ai-why{margin:12px 0;color:var(--muted);font-size:13px;line-height:1.5}.ai-replies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ai-reply{display:flex;flex-direction:column;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:6px;background:#fff}.ai-reply span{color:#b12f70;font-size:11px;font-weight:800;text-transform:capitalize}.ai-reply p{flex:1;margin:8px 0 12px;font-size:13px;line-height:1.45}.ai-reply button{padding:7px 9px;font-size:12px}.ai-error{border-color:#fecaca;background:#fff7f7;color:#991b1b}.ai-error p{margin:8px 0 0;font-size:13px}
 dialog{border-radius:8px;box-shadow:0 20px 60px rgba(16,24,40,.2)}
   @media(max-width:800px){.shell{grid-template-columns:1fr}main{padding:0}#feedView,#savedView,#watchlistsView,#settingsView{padding:20px 18px}.settings-grid{grid-template-columns:1fr}.settings-group-wide{grid-column:auto}.sidebar{padding:15px}.brand{padding:0}.nav{padding:8px 12px}.ai-connection-row{align-items:flex-start;flex-direction:column}.ai-replies{grid-template-columns:1fr}}
+.native-android .sidebar{padding-top:max(15px,env(safe-area-inset-top));padding-left:max(15px,env(safe-area-inset-left));padding-right:max(15px,env(safe-area-inset-right))}.native-android main{padding-bottom:env(safe-area-inset-bottom)}
+
+/* Android uses the phone layout in either orientation.  A wide landscape WebView
+   is still a touch UI, so keeping the desktop rail and two-column settings makes
+   controls cramped and can push checkboxes off screen. */
+.native-android .shell{grid-template-columns:1fr;min-width:0}
+.native-android .sidebar{position:static;height:auto;min-width:0;padding:12px max(14px,env(safe-area-inset-right)) 12px max(14px,env(safe-area-inset-left));flex-direction:row;align-items:center;gap:10px}
+.native-android .brand{padding:0;flex:none;gap:8px}
+.native-android .mark{width:34px;height:34px}
+.native-android .brand strong{font-size:17px}
+.native-android .brand small,.native-android .side-card,.native-android .rail-footer{display:none}
+.native-android .sidebar nav{display:flex;min-width:0;margin-left:auto;padding:0;gap:4px}
+.native-android .nav{grid-template-columns:auto;min-width:44px;padding:10px 12px;text-align:center}
+.native-android .nav span,.native-android .nav b{display:none}
+.native-android main{min-width:0;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.native-android header{padding:20px 18px;gap:16px;align-items:center}
+.native-android h1{font-size:27px}
+.native-android header p{font-size:13px}
+.native-android #feedView,.native-android #savedView,.native-android #watchlistsView,.native-android #settingsView{min-width:0;padding:20px 18px;overflow:hidden}
+.native-android .toolbar{align-items:flex-start;gap:12px;flex-direction:column}
+.native-android .scan-status{text-align:left}
+.native-android .tabs{max-width:100%;overflow-x:auto}
+.native-android .tab{white-space:nowrap}
+.native-android .settings-card{min-width:0;padding:16px}
+.native-android .settings-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+.native-android .settings-group-wide{grid-column:auto}
+.native-android .settings-group{min-width:0;padding:14px}
+.native-android .setting-field{gap:10px}
+.native-android .setting-field>span:first-child{min-width:0}
+.native-android .setting-field input[type=number]{width:76px;min-width:0}
+.native-android .setting-input-with-suffix{min-width:0;gap:5px}
+.native-android .setting-input-with-suffix small{width:auto;min-width:40px}
+.native-android .setting-toggle{align-items:flex-start;line-height:1.35}
+.native-android .setting-toggle input[type=checkbox]{margin-top:2px}
+.native-android .key-row{align-items:stretch;gap:8px}
+.native-android .key-row input,.native-android .api-fallback .key-row input{flex:1 1 180px;min-width:0;width:100%;margin:0}
+.native-android .key-row button{flex:0 0 auto}
+.native-android .key-status,.native-android .key-link{flex-basis:100%;white-space:normal}
+.native-android .platform-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:10px 12px}
+.native-android .platform-picker label{min-width:0;white-space:nowrap}
+.native-android .quiet-hours{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.native-android .quiet-hours label{min-width:0}
+.native-android .quiet-hours input{width:100%;min-width:0;margin:0}
+.native-android .quiet-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.native-android .quiet-days span{grid-column:1/-1}
+.native-android .ai-connection-row{align-items:stretch;flex-direction:column;gap:12px}
+.native-android .ai-connection-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.native-android .ai-connection-actions button,.native-android .test-notification{width:100%}
+.native-android .settings-actions{display:block}
+.native-android .settings-actions .primary{width:100%}
+.native-android .ai-settings.ai-unavailable>label,.native-android .ai-settings.ai-unavailable>textarea,.native-android .ai-settings.ai-unavailable>.hint{display:none}
+@media(max-width:480px){.native-android .brand strong{display:none}.native-android .sidebar{gap:6px}.native-android .nav{min-width:40px;padding:10px}.native-android header{align-items:flex-start;flex-direction:column}.native-android header .primary{width:100%}.native-android .key-row button{flex-basis:100%}}

@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="description" content="Find fresh public conversations and posts worth joining." />
   <title>RSignals — Opportunity Scanner</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <div class="brand"><img class="mark" src="/rs-logo.png" alt="RSignals" /><div><strong>RSignals</strong><small>Opportunity scanner</small></div></div>
+      <div class="brand"><img class="mark" src="rs-logo.png" alt="RSignals" /><div><strong>RSignals</strong><small>Opportunity scanner</small></div></div>
       <nav>
         <button class="nav active" data-view="feed">◉ <span>Opportunities</span><b id="navCount">0</b></button>
         <button class="nav" data-view="saved">☆ <span>Saved</span><b id="savedCount">0</b></button>
@@ -47,7 +47,7 @@
         <div class="settings-card">
           <label for="apiKey">AnyAPI key</label>
           <div class="key-row"><input id="apiKey" type="password" placeholder="Paste your AnyAPI key" /><button id="saveKey" class="secondary">Save key</button><span id="keyStatus" class="key-status" aria-live="polite">Checking…</span><a id="getAnyApiLink" class="key-link hidden" href="https://getanyapi.com/" target="_blank" rel="noopener noreferrer">Get an AnyAPI key</a></div>
-          <div class="hint">Stored in your Windows user profile. RSignals never signs into social accounts.</div>
+          <div id="credentialHint" class="hint">Stored in your Windows user profile. RSignals never signs into social accounts.</div>
           <hr />
           <label>Sources</label>
           <div class="platform-picker"><label><input id="platformX" type="checkbox" checked /> <span class="platform x">X</span> X</label><label><input id="platformLinkedIn" type="checkbox" checked /> <span class="platform linkedin">in</span> LinkedIn</label><label><input id="platformReddit" type="checkbox" /> <span class="platform reddit">R</span> Reddit</label><label><input id="platformYoutube" type="checkbox" /> <span class="platform youtube">▶</span> YouTube</label><label><input id="platformTiktok" type="checkbox" /> <span class="platform tiktok">♪</span> TikTok</label><label><input id="platformSubstack" type="checkbox" /> <span class="platform substack">S</span> Substack</label></div>
@@ -83,7 +83,8 @@
               <label class="setting-field"><span>Maximum results per query</span><input id="limit" type="number" min="1" max="50" value="12" /></label>
               <label class="setting-field"><span>Minimum followers (X/LinkedIn)</span><input id="minFollowers" type="number" min="0" max="1000000000" step="1" value="0" /></label>
               <label class="setting-field"><span>Freshness window</span><span class="setting-input-with-suffix"><input id="maxAgeHours" type="number" min="0.25" max="168" step="0.25" value="3" /><small>hours</small></span></label>
-              <label class="setting-field"><span>Automatic scan interval</span><span class="setting-input-with-suffix"><input id="scanInterval" type="number" min="5" max="240" step="5" value="15" /><small>minutes</small></span></label>
+              <label class="setting-field"><span id="scanIntervalLabel">Automatic scan interval</span><span class="setting-input-with-suffix"><input id="scanInterval" type="number" min="5" max="240" step="5" value="15" /><small>minutes</small></span></label>
+              <p id="androidScheduleHint" class="hidden">While RSignals is open, this controls foreground scans. Android background checks are best-effort and run no more frequently than about every 15 minutes.</p>
             </section>
 
             <section class="settings-group">
@@ -131,6 +132,7 @@
     </main>
   </div>
 
-  <script src="/app.js" type="module"></script>
+  <script src="capacitor.js"></script>
+  <script src="app.js" type="module"></script>
 </body>
 </html>
