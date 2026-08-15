@@ -121,6 +121,14 @@ disclosure behavior, not introduce a new visual theme.
 bottom navigation treatment for the four primary destinations. The queue can
 remain information-dense, but metrics and actions must not become tiny targets.
 
+**Responsive density rule.** Keep the existing desktop card anatomy where the
+screen is wide: the generous original-post text area, left-side score column,
+and spacious action region are easier to scan on PC. Android should use the
+compact single-column variant with the score moved into the metadata row and
+metrics kept quiet below the excerpt. Do not make the desktop feed look like a
+stretched phone layout, or make the phone reproduce the desktop card's wide
+columns.
+
 ### Job to be done
 
 When a fresh result appears, the user should be able to answer three questions
