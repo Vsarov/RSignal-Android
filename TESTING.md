@@ -49,7 +49,7 @@ build, date, observations, and relevant sanitized logcat evidence.
 | External link opens | Passed (adapter) | The Capacitor Browser adapter was physically exercised earlier. The final allowlist now only opens HTTPS source/OpenAI hosts; its behavior is covered by Node regression tests. |
 | Wi-Fi loss/recovery | Pending | |
 | Wi-Fi to mobile-data transition | Pending | |
-| Process kill/reopen | Pending | |
+| Process kill/reopen | Passed | 2026-08-15: `adb shell am kill com.signal.scanner` simulated ordinary Android process reclamation. The app relaunched to `MainActivity` without an `AndroidRuntime` or fatal exception in the captured startup log window. |
 | Force-stop/reopen | Passed (key persistence) | AnyAPI key remained configured after clean force-stop/relaunch on Samsung. |
 | Device reboot | Pending | |
 | Background scan under Samsung optimization | Partially checked | JobScheduler recorded a successful network-constrained worker run with the app in Android's active bucket. Long-running observation with normal Samsung battery optimization remains pending. |
