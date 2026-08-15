@@ -137,10 +137,15 @@ next opportunity — not extended feed reading.
 3. **Keep the signal compact.** Present fit/recency and one concise “why this
    matters” explanation near the excerpt. The score stays a small trust cue
    (for example, `84 fit`), never a dominant score column or card.
-4. **One clear next action.** `Open original` is the primary action. `Save` and
+4. **Expose useful scale and momentum.** Each card includes a quiet metrics
+   row for author followers plus the post's impressions and comments. Use the
+   source-provided value when available; show an honest unavailable marker or
+   omit that metric when a source does not provide it. These metrics stay below
+   the excerpt and never compete with the original text.
+5. **One clear next action.** `Open original` is the primary action. `Save` and
    `Hide` remain accessible but secondary. Android must not surface an active
    AI action when AI Assist is unavailable on that platform.
-5. **Fast progression.** After saving or hiding, keep the user’s scroll
+6. **Fast progression.** After saving or hiding, keep the user’s scroll
    position stable and make the next card immediately skimmable. Do not use
    auto-advancing content or gestures that conflict with ordinary vertical
    scrolling.
