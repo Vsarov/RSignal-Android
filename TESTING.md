@@ -25,7 +25,7 @@
 | WorkManager worker | Passed: compiled with the debug build; Samsung JobScheduler confirmed registration and an initial successful run |
 | Android debug APK | Passed: combined `testDebugUnitTest` and `assembleDebug` with Java 21; final 8,133,199-byte APK installed on Samsung |
 | Android JVM tests | Passed: `testDebugUnitTest` |
-| Samsung launch smoke test | Passed: final APK installed; `com.signal.scanner/.MainActivity` became the top resumed activity, rendered 16 live/background results after unlock, and had no RSignals AndroidRuntime crash |
+| Samsung launch smoke test | Passed: the current 8,133,199-byte APK was reinstalled on 2026-08-15; `com.signal.scanner/.MainActivity` became the top resumed activity with no RSignals AndroidRuntime crash in the captured startup log window. An earlier unlocked check rendered 16 live/background results. |
 | Samsung WorkManager registration | Passed: network-constrained unique periodic work is registered; Android/OEM timing is not exact |
 
 ## Samsung Android validation matrix
